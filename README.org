@@ -1,0 +1,41 @@
+#+TITLE: KQL-MODE
+#+AUTHOR: Aimé Bertrand
+#+DATE: [2023-10-22 Sun]
+#+LANGUAGE: en
+#+OPTIONS: d:t toc:nil num:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://macowners.club/css/gtd-dark.css" />
+#+KEYWORDS: files languages azure entra kql faces syntax major-mode
+#+STARTUP: indent showall
+
+A Major mode for syntax highlighting of KQL code/files
+
+* Installation
+** Manual installation
+1. Download the [[https://gitlab.com/aimebertrand/kql-mode/-/raw/main/kql-mode.el][=kql-mode.el=]] file and add it to your =custom-load-path=.
+2. In your =~/.emacs.d/init.el= or =~/.emacs=:
+
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.kql\\'" . kql-mode))
+#+end_src
+
+** From [[https://melpa.org/#/timu-spacegrey-theme][Melpa]]
+1. =M-x package-install RET kql-mode RET=.
+2. In your =~/.emacs.d/init.el= or =~/.emacs=:
+
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.kql\\'" . kql-mode))
+#+end_src
+
+** With [[https://github.com/jwiegley/use-package][use-package]]
+#+begin_src emacs-lisp
+  (use-package kql-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.kql\\'" . kql-mode)))
+#+end_src
+
+** Activating the mode interactively
+=M-x kql-mode RET=
+
+* License
+MIT License
