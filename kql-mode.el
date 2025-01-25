@@ -59,9 +59,17 @@
 ;;; Code:
 
 (defconst kql-mode-keywords
-  '("let" "project" "summarize" "order" "by" "asc" "desc" "where"
-    "ago" "and" "or" "join" "on" "union" "parse" "extend" "partition"
-    "top" "top-hitters" "limit" "sample" "sort" "render"))
+  '("add" "and" "as" "asc" "between" "by" "case" "contains" "count" "desc"
+    "distinct" "endtime" "extend" "false" "fork" "format_datetime" "from" "has"
+    "in" "ingestion_time" "inner" "isempty" "isfinite" "isnan" "isnotempty"
+    "isnotnull" "isnull" "join" "let" "like" "limit" "make_list" "make_set"
+    "matches regex" "not" "now" "or" "order by" "parse" "print" "project"
+    "project-away" "project-rename" "range" "reduce" "render" "sample" "search"
+    "serialize" "set" "starttime" "summarize" "take" "to" "todatetime"
+    "todecimal" "todouble" "toint" "tolong" "tostring" "true" "type" "union"
+    "where")
+  "List of KQL keywords for syntax highlighting.
+This list is not exhaustive for now.")
 
 (defconst kql-mode-keywords-regexp
   (regexp-opt kql-mode-keywords 'words))
@@ -70,12 +78,24 @@
   "\\b\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\s-?=[^=]")
 
 (defconst kql-functions
-  '("count" "sum" "avg" "min" "max" "stdev" "make-series" "hll"
-    "dcount" "percentile" "between" "coalesce" "strcat" "toupper"
-    "tolower" "trim" "extract" "replace" "round" "floor" "ceiling"
-    "abs" "strlen" "split" "getyear" "getmonth" "getday" "gethour"
-    "getminute" "getsecond" "now" "datetime_diff" "startofmonth"
-    "startofyear" "bin"))
+  '("abs" "ago" "arg_max" "arg_min" "array_concat" "array_length" "array_slice"
+    "autocluster" "avg" "bag_keys" "bag_merge" "base64_decode_tostring"
+    "base64_encode_tostring" "basket" "bin" "bin_at" "ceiling" "count"
+    "countif" "datetime" "dayofmonth" "dayofweek" "dayofyear" "dcount"
+    "dcountif" "diffpatterns" "endofday" "endofmonth" "endofweek" "endofyear"
+    "exp" "extract" "extract_all" "floor" "format_datetime" "format_timespan"
+    "geo_distance_2points" "geo_point_in_polygon" "geo_polygon_to_s2cells"
+    "getmonth" "getyear" "hash" "indexof" "isempty" "isnotempty" "log" "log10"
+    "log2" "make_datetime" "make_timespan" "max" "min" "new_guid" "now" "pack"
+    "parse_command_line" "parse_csv" "parse_json" "parse_json" "parse_url"
+    "percentile" "pow" "predict" "rand" "replace" "round" "series_decompose"
+    "series_fill_const" "series_fill_linear" "series_outliers" "series_stats"
+    "split" "sqrt" "startofday" "startofmonth" "startofweek" "startofyear"
+    "stdev" "strcat" "strlen" "substring" "sum" "take_any" "tobool" "todatetime"
+    "todouble" "toint" "tolong" "tolower" "tostring" "totimespan" "toupper"
+    "trim" "trim_end" "trim_start" "variance" "zip")
+  "List of KQL functions for syntax highlighting.
+This list is not exhaustive for now.")
 
 (defconst kql-functions-regexp
   (regexp-opt kql-functions 'words))
