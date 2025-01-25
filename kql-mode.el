@@ -1,7 +1,7 @@
 ;;; kql-mode.el --- Major mode for highlighting KQL -*- lexical-binding: t -*-
 
 ;; Author: Aimé Bertrand
-;; Version: 0.2
+;; Version: 0.3
 ;; Package-Requires: ((emacs "26.1"))
 ;; Created: 2023-10-13
 ;; Keywords: files languages azure entra kql faces syntax major-mode
@@ -32,7 +32,7 @@
 ;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ;;; Commentary:
-;; kql-mode provides syntax highlighting and basic indentation for Kusto Query Language (KQL).
+;; kql-mode provides syntax highlighting for Kusto Query Language (KQL).
 ;; To use, add the following to your Emacs configuration:
 ;;
 ;; I. Installation
@@ -72,10 +72,8 @@
 This list is not exhaustive for now.")
 
 (defconst kql-mode-keywords-regexp
-  (regexp-opt kql-mode-keywords 'words))
-
-(defconst kql-variable-regexp
-  "\\b\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\s-?=[^=]")
+  (concat "\\b" (regexp-opt kql-mode-keywords 'words) "\\b")
+  "Regexp to match KQL keywords for font-lock highlighting.")
 
 (defconst kql-functions
   '("abs" "ago" "arg_max" "arg_min" "array_concat" "array_length" "array_slice"
@@ -98,35 +96,62 @@ This list is not exhaustive for now.")
 This list is not exhaustive for now.")
 
 (defconst kql-functions-regexp
-  (regexp-opt kql-functions 'words))
-
-(defconst kql-operators-regexp
-  "\\(\\+\\|-\\|*\\|/\\|=\\|<\\|>\\|!\\)")
+  (concat "\\b" (regexp-opt kql-functions 'words) "\\b")
+  "Regexp to match KQL functions for font-lock highlighting.")
 
 (defconst kql-array-regexp
-  "\\[\\([0-9]+\\)\\]")
+  "\\[\\([0-9]+\\)\\]"
+  "Regexp to match KQL arrays for font-lock highlighting.")
+
+(defconst kql-comment-regexp
+  "//.*$"
+  "Regexp to match KQL comments for font-lock highlighting.")
+
+(defconst kql-functions-call-regexp
+  (concat "\\b" (regexp-opt kql-functions 'words) "\\s-*(")
+  "Regexp to match KQL function calls for font-lock highlighting.")
+
+(defconst kql-operators-regexp
+  (concat "\\(?:\\+\\|-\\|\\*\\|/\\|%\\|==\\|!=\\|>\\|"
+          "<\\|>=\\|<=\\|!\\|=~\\|!~\\|in\\|!in\\)")
+  "Regexp to match KQL operators for font-lock highlighting.")
 
 (defconst kql-property-regexp
-  "\\.\\([a-zA-Z_][a-zA-Z0-9_]*\\)")
+  "\\.\\([a-zA-Z_][a-zA-Z0-9_]*\\)"
+  "Regexp to match KQL properties for font-lock highlighting.")
+
+(defconst kql-string-regexp
+  "\"\\(?:[^\"\\]\\|\\\\.\\)*\""
+  "Regexp to match KQL strings for font-lock highlighting.")
+
+(defconst kql-variable-regexp
+  "\\b\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\s-?=[^=]"
+  "Regexp to match KQL variables for font-lock highlighting.")
 
 (defconst kql-mode-font-lock-keywords
-  `((,kql-mode-keywords-regexp . font-lock-keyword-face)
-    (,kql-variable-regexp 1 font-lock-variable-name-face)
+  `((,kql-array-regexp . font-lock-type-face)
+    (,kql-comment-regexp . font-lock-comment-face)
+    (,kql-functions-call-regexp . font-lock-function-name-face)
+    (,kql-mode-keywords-regexp . font-lock-keyword-face)
     (,kql-functions-regexp . font-lock-function-name-face)
-    (,kql-operators-regexp . font-lock-builtin-face)
-    (,kql-array-regexp . font-lock-type-face)
-    (,kql-property-regexp . font-lock-function-name-face)))
+    (,kql-operators-regexp . font-lock-warning-face)
+    (,kql-property-regexp . font-lock-function-name-face)
+    (,kql-string-regexp . font-lock-string-face)
+    (,kql-variable-regexp 1 font-lock-variable-name-face))
+  "List of font-lock rules for syntax highlighting in KQL mode.")
 
 (defvar kql-mode-syntax-table
   (let ((table (make-syntax-table)))
-    ;; KQL-style comments
+    ;; Brackets and parentheses
+    (modify-syntax-entry ?\( "()" table)
+    (modify-syntax-entry ?\) ")(" table)
+    (modify-syntax-entry ?\[ "(]" table)
+    (modify-syntax-entry ?\] ")[" table)
+    (modify-syntax-entry ?{ "(}" table)
+    (modify-syntax-entry ?} "){" table)
+    ;; Comments
     (modify-syntax-entry ?/ ". 12b" table)
     (modify-syntax-entry ?\n "> b" table)
-    ;; Strings
-    (modify-syntax-entry ?\" "\"" table)
-    ;; Variables
-    (modify-syntax-entry ?_ "w" table)
-    (modify-syntax-entry ?- "w" table)
     ;; Operators
     (modify-syntax-entry ?+ "." table)
     (modify-syntax-entry ?* "." table)
@@ -137,17 +162,22 @@ This list is not exhaustive for now.")
     (modify-syntax-entry ?< "." table)
     (modify-syntax-entry ?> "." table)
     (modify-syntax-entry ?= "." table)
-    ;; Brackets and parentheses
-    (modify-syntax-entry ?\( "()" table)
-    (modify-syntax-entry ?\) ")(" table)
-    (modify-syntax-entry ?\[ "(]" table)
-    (modify-syntax-entry ?\] ")[" table)
-    (modify-syntax-entry ?{ "(}" table)
-    (modify-syntax-entry ?} "){" table)
-    table))
+    ;; Strings
+    (modify-syntax-entry ?\" "\"" table)
+    ;; Variables
+    (modify-syntax-entry ?_ "w" table)
+    (modify-syntax-entry ?- "w" table)
+    table)
+  "Syntax table for KQL mode.
+Defines syntax rules for:
+- Brackets and parentheses
+- Comments
+- Operators
+- Strings
+- Variables")
 
 (define-derived-mode kql-mode prog-mode "KQL"
-  "Major mode for highlighting Kusto Query Language."
+  "Major mode for highlighting Kusto Query Language (KQL) files."
   :syntax-table kql-mode-syntax-table
   (setq font-lock-defaults '(kql-mode-font-lock-keywords)))
 
