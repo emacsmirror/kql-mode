@@ -176,6 +176,7 @@ Defines syntax rules for:
 - Strings
 - Variables")
 
+;;;###autoload
 (define-derived-mode kql-mode prog-mode "KQL"
   "Major mode for highlighting Kusto Query Language (KQL) files."
   :syntax-table kql-mode-syntax-table
